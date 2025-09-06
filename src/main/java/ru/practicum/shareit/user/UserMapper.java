@@ -20,7 +20,7 @@ public class UserMapper {
         return existingUser;
     }
 
-    public static User DtoToNewUser(CreateUserDto createUserDto) {
+    public static User dtoToNewUser(CreateUserDto createUserDto) {
         return User.builder().name(createUserDto.getName()).email(createUserDto.getEmail()).build();
     }
 }

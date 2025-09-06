@@ -10,7 +10,7 @@ public class ItemMapper {
         return ItemDto.builder().id(item.getId()).name(item.getName()).description(item.getDescription()).available(item.getAvailable()).owner(item.getOwner()).build();
     }
 
-    public static Item DtoUpdateExistingItem(Item existingItem, UpdateItemDto updateItemDto) {
+    public static Item dtoUpdateExistingItem(Item existingItem, UpdateItemDto updateItemDto) {
         if (updateItemDto.getName() != null) {
             existingItem.setName(updateItemDto.getName());
         }
@@ -23,7 +23,7 @@ public class ItemMapper {
         return existingItem;
     }
 
-    public static Item DtoToNewItem(CreateItemDto createItemDto) {
+    public static Item dtoToNewItem(CreateItemDto createItemDto) {
         return Item.builder().name(createItemDto.getName()).description(createItemDto.getDescription()).available(createItemDto.getAvailable()).build();
     }
 }

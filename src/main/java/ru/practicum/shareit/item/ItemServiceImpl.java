@@ -47,7 +47,7 @@ public class ItemServiceImpl implements ItemService {
     public ItemDto createItem(String userIdStr, CreateItemDto createItemDto) {
         log.info("Попытка создания вещи пользователя ID: {}", userIdStr);
         Long userId = Long.parseLong(userIdStr);
-        Item createdItem = ItemMapper.DtoToNewItem(createItemDto);
+        Item createdItem = ItemMapper.dtoToNewItem(createItemDto);
         User userById = userRepository.getUserById(userId).orElseThrow(() -> new NotFoundException("User с Id" + userId + "не найден"));
         createdItem.setOwner(userById);
         Item resultItem = itemRepository.createItem(createdItem);
@@ -66,7 +66,7 @@ public class ItemServiceImpl implements ItemService {
         }
         Item existingItem = itemRepository.getItemById(itemId).orElseThrow(() -> new NotFoundException("Вещь не найдена"));
         centralValidator.updatedItemAccess(existingItem, userId);
-        Item updatedItem = ItemMapper.DtoUpdateExistingItem(existingItem, updateItemDto);
+        Item updatedItem = ItemMapper.dtoUpdateExistingItem(existingItem, updateItemDto);
         Item resultItem = itemRepository.updateItem(updatedItem);
         log.info("Успешное обновление вещи с ID: {}", itemId);
         return ItemMapper.itemToDto(resultItem);

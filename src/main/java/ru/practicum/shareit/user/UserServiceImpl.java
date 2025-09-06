@@ -43,7 +43,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserDto createUser(CreateUserDto createUserDto) {
         log.info("Попытка создания нового пользователя: email={}, name={}", createUserDto.getEmail(), createUserDto.getName());
-        User createdUser = UserMapper.DtoToNewUser(createUserDto);
+        User createdUser = UserMapper.dtoToNewUser(createUserDto);
         Optional<User> resultUser = userRepository.createUser(createdUser);
         log.info("Попытка создания нового пользователя:  id={}", resultUser.get().getId());
         return UserMapper.userToDto(resultUser.orElseThrow(() -> new ConflictException("Такой email уже существует")));
