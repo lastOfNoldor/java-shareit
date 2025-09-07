@@ -24,7 +24,7 @@ public class UserRepositoryImpl implements UserRepository {
 
     @Override
     public Optional<User> getUserById(Long id) {
-        return tempRepository.values().stream().filter(user -> user.getId().equals(id)).findFirst();
+        return Optional.ofNullable(tempRepository.get(id));
     }
 
     @Override
@@ -48,9 +48,9 @@ public class UserRepositoryImpl implements UserRepository {
     }
 
     @Override
-    public boolean deleteUser(Long id) {
+    public void deleteUser(Long id) {
         tempRepository.remove(id);
-        return true;
+
 
     }
 }

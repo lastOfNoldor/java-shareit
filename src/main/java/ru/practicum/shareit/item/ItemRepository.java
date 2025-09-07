@@ -14,7 +14,7 @@ public interface ItemRepository {
 
     Item updateItem(Item item);
 
-    boolean deleteItem(Long id);
+    void deleteItem(Long id);
 
     Collection<Item> searchItem(String text);
 }

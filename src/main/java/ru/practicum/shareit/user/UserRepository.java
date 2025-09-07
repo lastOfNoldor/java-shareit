@@ -14,7 +14,7 @@ public interface UserRepository {
 
     User updateUser(User user);
 
-    boolean deleteUser(Long id);
+    void deleteUser(Long id);
 
     boolean isEmailTakenByOtherUser(String email, Long userId);
 

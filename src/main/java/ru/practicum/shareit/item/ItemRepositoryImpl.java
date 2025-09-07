@@ -29,7 +29,7 @@ public class ItemRepositoryImpl implements ItemRepository {
 
     @Override
     public Optional<Item> getItemById(Long id) {
-        return tempRepository.values().stream().filter(item -> item.getId().equals(id)).findFirst();
+        return Optional.ofNullable(tempRepository.get(id));
     }
 
     @Override
@@ -46,9 +46,8 @@ public class ItemRepositoryImpl implements ItemRepository {
     }
 
     @Override
-    public boolean deleteItem(Long id) {
+    public void deleteItem(Long id) {
         tempRepository.remove(id);
-        return true;
     }
 
     @Override
