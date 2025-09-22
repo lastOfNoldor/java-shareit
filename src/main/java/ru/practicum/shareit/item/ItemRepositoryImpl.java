@@ -12,46 +12,46 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-@Repository
-@Qualifier("itemRepository")
-@RequiredArgsConstructor
-public class ItemRepositoryImpl implements ItemRepository {
-    private final HashMap<Long, Item> tempRepository = new HashMap<>();
-    Long counter = 0L;
-
-    @Override
-    public Collection<Item> getAllUserItems(Long userId) {
-        if (userId == null) {
-            throw new ValidationException("отсутствует Id пользователя");
-        }
-        return tempRepository.values().stream().filter(item -> Objects.equals(item.getOwner().getId(), userId)).collect(Collectors.toList());
-    }
-
-    @Override
-    public Optional<Item> getItemById(Long id) {
-        return Optional.ofNullable(tempRepository.get(id));
-    }
-
-    @Override
-    public Item createItem(Item item) {
-        item.setId(++counter);
-        tempRepository.put(item.getId(), item);
-        return item;
-    }
-
-    @Override
-    public Item updateItem(Item item) {
-        tempRepository.put(item.getId(), item);
-        return item;
-    }
-
-    @Override
-    public void deleteItem(Long id) {
-        tempRepository.remove(id);
-    }
-
-    @Override
-    public Collection<Item> searchItem(String text) {
-        return tempRepository.values().stream().filter(Item::getAvailable).filter(item -> (item.getName() != null && item.getName().toLowerCase().contains(text.toLowerCase())) || (item.getDescription() != null && item.getDescription().toLowerCase().contains(text.toLowerCase()))).toList();
-    }
-}
+//@Repository
+//@Qualifier("itemRepository")
+//@RequiredArgsConstructor
+//public class ItemRepositoryImpl implements ItemRepository {
+//    private final HashMap<Long, Item> tempRepository = new HashMap<>();
+//    Long counter = 0L;
+//
+//    @Override
+//    public Collection<Item> getAllUserItems(Long userId) {
+//        if (userId == null) {
+//            throw new ValidationException("отсутствует Id пользователя");
+//        }
+//        return tempRepository.values().stream().filter(item -> Objects.equals(item.getOwner().getId(), userId)).collect(Collectors.toList());
+//    }
+//
+//    @Override
+//    public Optional<Item> getItemById(Long id) {
+//        return Optional.ofNullable(tempRepository.get(id));
+//    }
+//
+//    @Override
+//    public Item createItem(Item item) {
+//        item.setId(++counter);
+//        tempRepository.put(item.getId(), item);
+//        return item;
+//    }
+//
+//    @Override
+//    public Item updateItem(Item item) {
+//        tempRepository.put(item.getId(), item);
+//        return item;
+//    }
+//
+//    @Override
+//    public void deleteItem(Long id) {
+//        tempRepository.remove(id);
+//    }
+//
+//    @Override
+//    public Collection<Item> searchItem(String text) {
+//        return tempRepository.values().stream().filter(Item::getAvailable).filter(item -> (item.getName() != null && item.getName().toLowerCase().contains(text.toLowerCase())) || (item.getDescription() != null && item.getDescription().toLowerCase().contains(text.toLowerCase()))).toList();
+//    }
+//}

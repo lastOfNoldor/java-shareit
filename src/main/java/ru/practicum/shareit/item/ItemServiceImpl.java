@@ -29,7 +29,7 @@ public class ItemServiceImpl implements ItemService {
     @Override
     public Collection<ItemDto> findAllUsersItems(Long userId) {
         log.info("Попытка получения списка всех вещей владельца.");
-        return itemRepository.getAllUserItems(userId).stream().map(ItemMapper::itemToDto).collect(Collectors.toList());
+        return itemRepository.findAllByUserId(userId).stream().map(ItemMapper::itemToDto).collect(Collectors.toList());
 
     }
 
@@ -39,7 +39,7 @@ public class ItemServiceImpl implements ItemService {
         if (id == null) {
             throw new ValidationException("отсутствует Id вещи");
         }
-        Optional<Item> itemById = itemRepository.getItemById(id);
+        Optional<Item> itemById = itemRepository.findById(id);
         return ItemMapper.itemToDto(itemById.orElseThrow(() -> new NotFoundException("item с Id" + id + "не найден")));
     }
 
@@ -50,7 +50,7 @@ public class ItemServiceImpl implements ItemService {
         Item createdItem = ItemMapper.dtoToNewItem(createItemDto);
 //        User userById = userRepository.getUserById(userId).orElseThrow(() -> new NotFoundException("User с Id" + userId + "не найден"));
 //        createdItem.setOwner(userById);
-        Item resultItem = itemRepository.createItem(createdItem);
+        Item resultItem = itemRepository.save(createdItem);
         return ItemMapper.itemToDto(resultItem);
     }
 
@@ -64,10 +64,10 @@ public class ItemServiceImpl implements ItemService {
         if (userId == null) {
             throw new ValidationException("отсутствует Id пользователя");
         }
-        Item existingItem = itemRepository.getItemById(itemId).orElseThrow(() -> new NotFoundException("Вещь не найдена"));
+        Item existingItem = itemRepository.findById(itemId).orElseThrow(() -> new NotFoundException("Вещь не найдена"));
         centralValidator.updatedItemAccess(existingItem, userId);
         Item updatedItem = ItemMapper.dtoUpdateExistingItem(existingItem, updateItemDto);
-        Item resultItem = itemRepository.updateItem(updatedItem);
+        Item resultItem = itemRepository.save(updatedItem);
         log.info("Успешное обновление вещи с ID: {}", itemId);
         return ItemMapper.itemToDto(resultItem);
     }
@@ -78,7 +78,7 @@ public class ItemServiceImpl implements ItemService {
         if (text == null || text.isBlank()) {
             return Collections.emptyList();
         }
-        return itemRepository.searchItem(text).stream().map(ItemMapper::itemToDto).collect(Collectors.toList());
+        return itemRepository.searchInNameOrDescription(text).stream().map(ItemMapper::itemToDto).collect(Collectors.toList());
     }
 
     @Override
@@ -86,7 +86,7 @@ public class ItemServiceImpl implements ItemService {
         if (id == null) {
             throw new ValidationException("отсутствует Id вещи");
         }
-        itemRepository.deleteItem(id);
+//        itemRepository.deleteItem(id);
         log.info("Пользователь с ID {} удален", id);
 
     }
