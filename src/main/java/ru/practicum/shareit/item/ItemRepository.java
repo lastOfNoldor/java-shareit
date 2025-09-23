@@ -13,7 +13,7 @@ public interface ItemRepository extends JpaRepository<Item, Long> {
 
     List<Item> findAllByUserId(Object unknownAttr1);
 
-    @Query("SELECT i FROM items i WHERE " + "LOWER(i.name) LIKE LOWER(CONCAT('%', :searchText, '%')) OR " +
+    @Query("SELECT i FROM Item i WHERE " + "LOWER(i.name) LIKE LOWER(CONCAT('%', :searchText, '%')) OR " +
             "LOWER(i.description) LIKE LOWER(CONCAT('%', :searchText, '%'))")
     List<Item> searchInNameOrDescription(@Param("searchText") String searchText);
 

@@ -48,8 +48,8 @@ public class ItemServiceImpl implements ItemService {
         log.info("Попытка создания вещи пользователя ID: {}", userIdStr);
         Long userId = Long.parseLong(userIdStr);
         Item createdItem = ItemMapper.dtoToNewItem(createItemDto);
-//        User userById = userRepository.getUserById(userId).orElseThrow(() -> new NotFoundException("User с Id" + userId + "не найден"));
-//        createdItem.setOwner(userById);
+        User userById = userRepository.findById(userId).orElseThrow(() -> new NotFoundException("User с Id" + userId + "не найден"));
+        createdItem.setOwner(userById);
         Item resultItem = itemRepository.save(createdItem);
         return ItemMapper.itemToDto(resultItem);
     }

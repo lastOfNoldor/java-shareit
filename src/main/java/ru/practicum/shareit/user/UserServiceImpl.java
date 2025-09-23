@@ -56,7 +56,7 @@ public class UserServiceImpl implements UserService {
             throw new ValidationException("отсутствует Id пользователя");
         }
         User existingUser = userRepository.findById(id).orElseThrow(() -> new NotFoundException("Пользователь не найден"));
-//        centralValidator.updatedUserEmailIsTaken(existingUser, updateUserDto, id);
+        centralValidator.updatedUserEmailIsTaken(existingUser, updateUserDto);
         User updatedUser = UserMapper.dtoToUpdatedUser(existingUser, updateUserDto);
         User resultUser = userRepository.save(updatedUser);
         log.info("Успешное обновление пользователя с ID: {}", id);

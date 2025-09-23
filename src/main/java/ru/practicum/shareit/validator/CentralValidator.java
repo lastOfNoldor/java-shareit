@@ -16,15 +16,15 @@ import java.util.Objects;
 public class CentralValidator {
     private final UserRepository userRepository;
 
-//    public void updatedUserEmailIsTaken(User existingUser, UpdateUserDto updateUserDto, Long requesterId) {
-//        if (updateUserDto.getEmail() != null) {
-//            if (!existingUser.getEmail().equals(updateUserDto.getEmail())) {
-//                if (userRepository.isEmailTakenByOtherUser(updateUserDto.getEmail(), requesterId)) {
-//                    throw new ConflictException("Email уже занят другим пользователем");
-//                }
-//            }
-//        }
-//    }
+    public void updatedUserEmailIsTaken(User existingUser, UpdateUserDto updateUserDto) {
+        if (updateUserDto.getEmail() != null) {
+            if (!existingUser.getEmail().equals(updateUserDto.getEmail())) {
+                if (userRepository.existsByEmail(updateUserDto.getEmail())) {
+                    throw new ConflictException("Email уже занят другим пользователем");
+                }
+            }
+        }
+    }
 
     public void updatedItemAccess(Item existingItem, Long userId) {
         if (!Objects.equals(existingItem.getOwner().getId(), userId)) {
