@@ -33,7 +33,7 @@ public class BookingController {
     public ResponseEntity<BookingDto> findBookingById(@RequestHeader(value = "X-Sharer-User-Id", required = false) String userId,@PathVariable Long bookingId) {
         return ResponseEntity.ok(bookingService.findBookingById(userId,bookingId));
     }
-    //TODO  Может быть выполнено либо автором бронирования, либо владельцем вещи, к которой относится бронирование.
+
 
     @GetMapping
     public  ResponseEntity<Collection<BookingDto>> findAllUserBookingsWithState(@RequestHeader(value = "X-Sharer-User-Id", required = false) String userId,@RequestParam(value = "state", defaultValue = "ALL") BookingState state) {

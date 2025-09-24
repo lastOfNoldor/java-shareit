@@ -3,6 +3,7 @@ package ru.practicum.shareit.booking;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.dto.CreateBookingDto;
 import ru.practicum.shareit.exception.NotFoundException;
@@ -12,8 +13,12 @@ import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.UserRepository;
 import ru.practicum.shareit.user.model.User;
 
+import java.time.Instant;
+import java.time.chrono.ChronoLocalDateTime;
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -51,21 +56,33 @@ public class BookingServiceImpl  implements BookingService{
         return BookingMapper.bookingToDto(bookingRepository.save(resultBooking));
     }
 
+    @Transactional(readOnly = true)
     @Override
     public BookingDto findBookingById(String userIdStr, Long bookingId) {
         Long userId = Long.parseLong(userIdStr);
-        return null;
+        Booking resultBooking = bookingRepository.findById(bookingId).orElseThrow(() -> new NotFoundException("Бронирование не найдено!"));
+        User booker = resultBooking.getBooker();
+        User owner = resultBooking.getItem().getOwner();
+        if (!Objects.equals(userId, booker.getId()) && !Objects.equals(userId,owner.getId())) {
+            throw new NotFoundException("У вас нет доступа к данной брони");
+        }
+        return BookingMapper.bookingToDto(resultBooking);
     }
 
     @Override
     public Collection<BookingDto> findAllUserBookingsWithState(String userIdStr, BookingState state) {
         Long userId = Long.parseLong(userIdStr);
+        List<Booking> usersBookings = bookingRepository.findAllByBookerId(userId);
+        switch (state) {
+            case PAST -> usersBookings.stream().filter(booking -> booking.getStart().isBefore(ChronoLocalDateTime.from(Instant.now()))).filter(booking -> booking.getEnd().isBefore(ChronoLocalDateTime.from(Instant.now()))).collect(Collectors.toList());
+        }
         return List.of();
     }
 
     @Override
     public Collection<BookingDto> findAllBookingsOfUserItemsWithState(String userIdStr, BookingState state) {
         Long userId = Long.parseLong(userIdStr);
+        List<Booking> allRelatedBookings = bookingRepository.findAllByItemOwnerId(userId);
         return List.of();
     }
 }
