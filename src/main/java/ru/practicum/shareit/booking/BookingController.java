@@ -35,16 +35,13 @@ public class BookingController {
         return ResponseEntity.ok(bookingService.findBookingById(userId,bookingId));
     }
 
-
     @GetMapping
     public  ResponseEntity<List<BookingDto>> findAllUserBookingsWithState(@RequestHeader(value = "X-Sharer-User-Id", required = false) String userId,@RequestParam(value = "state", defaultValue = "ALL") BookingServiceState state) {
         return ResponseEntity.ok(bookingService.findAllUserBookingsWithState(userId, state));
     }
-    //TODO  "Какие вещи Я бронировал"
 
     @GetMapping("/owner")
     public ResponseEntity<List<BookingDto>> findAllBookingsOfUserItemsWithState(@RequestHeader(value = "X-Sharer-User-Id", required = false) String userId, @RequestParam(value = "state", defaultValue = "ALL") BookingServiceState state) {
         return ResponseEntity.ok(bookingService.findAllBookingsOfUserItemsWithState(userId, state));
     }
-    //TODO "Кто бронировал МОИ вещи"
 }

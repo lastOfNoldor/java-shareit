@@ -25,6 +25,7 @@ public class ItemServiceImpl implements ItemService {
     private final ItemRepository itemRepository;
     private final CentralValidator centralValidator;
     private final UserRepository userRepository;
+    private final CentralValidator validator;
 
     @Override
     public Collection<ItemDto> findAllUsersItems(Long userId) {
@@ -39,22 +40,23 @@ public class ItemServiceImpl implements ItemService {
         if (id == null) {
             throw new ValidationException("отсутствует Id вещи");
         }
-        Optional<Item> itemById = itemRepository.findById(id);
+        Optional<Item> itemById = itemRepository.findByIdWithRelations(id);
         return ItemMapper.itemToDto(itemById.orElseThrow(() -> new NotFoundException("item с Id" + id + "не найден")));
     }
 
     @Override
     public ItemDto createItem(String userIdStr, CreateItemDto createItemDto) {
         log.info("Попытка создания вещи пользователя ID: {}", userIdStr);
-        Long userId = Long.parseLong(userIdStr);
+        Long userId = validator.userIdFormatValidation(userIdStr);
         Item createdItem = ItemMapper.dtoToNewItem(createItemDto);
         User userById = userRepository.findById(userId).orElseThrow(() -> new NotFoundException("User с Id" + userId + "не найден"));
         createdItem.setOwner(userById);
         Item resultItem = itemRepository.save(createdItem);
-        return ItemMapper.itemToDto(resultItem);
+        return ItemMapper.itemToDto(resultItem,userById);
     }
 
 
+    //TODO
     @Override
     public ItemDto updateItem(Long userId, Long itemId, UpdateItemDto updateItemDto) {
         log.info("Попытка обновления вещи с ID: {}", itemId);

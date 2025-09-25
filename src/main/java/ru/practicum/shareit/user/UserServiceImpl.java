@@ -3,9 +3,12 @@ package ru.practicum.shareit.user;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import ru.practicum.shareit.booking.BookingRepository;
 import ru.practicum.shareit.exception.ConflictException;
 import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.exception.ValidationException;
+import ru.practicum.shareit.item.ItemRepository;
+import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.dto.CreateUserDto;
 import ru.practicum.shareit.user.dto.UpdateUserDto;
 import ru.practicum.shareit.user.dto.UserDto;
@@ -13,6 +16,7 @@ import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.validator.CentralValidator;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -22,6 +26,8 @@ import java.util.stream.Collectors;
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final CentralValidator centralValidator;
+    private final BookingRepository bookingRepository;
+    private final ItemRepository itemRepository;
 
 
     @Override
@@ -68,9 +74,13 @@ public class UserServiceImpl implements UserService {
         if (id == null) {
             throw new ValidationException("отсутствует Id пользователя");
         }
-//        userRepository.delete(userRepository.findById(id));
+        bookingRepository.deleteByBooker_Id(id);
+        List<Item> userItems = itemRepository.findAllByOwner_Id(id);
+        for (Item item : userItems) {
+            bookingRepository.deleteByItem_Id(item.getId());
+            itemRepository.delete(item);
+        }
+        userRepository.deleteById(id);
         log.info("Пользователь с ID {} удален", id);
     }
-
-
 }

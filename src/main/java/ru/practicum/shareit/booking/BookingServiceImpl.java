@@ -2,6 +2,7 @@ package ru.practicum.shareit.booking;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.DataAccessResourceFailureException;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,8 +17,6 @@ import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.validator.CentralValidator;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -31,16 +30,18 @@ public class BookingServiceImpl  implements BookingService{
     private final UserRepository userRepository;
     private final CentralValidator validator;
 
-
+    @Transactional
     @Override
     public BookingDto createBooking(String userIdStr, CreateBookingDto createBookingDto) {
         Long userId = validator.userIdFormatValidation(userIdStr);
-        Item bookingItem = itemRepository.findById(createBookingDto.getItemId()).orElseThrow(() -> new NotFoundException("Item Id указан неверно"));
-        User user = userRepository.findById(userId).orElseThrow(() -> new NotFoundException("User Id указан неверно"));
-        Booking createdBooking = BookingMapper.dtoToNewBooking(createBookingDto, bookingItem, user);
-        return BookingMapper.bookingToDto(bookingRepository.save(createdBooking));
+        Item bookingItem = itemRepository.findById(createBookingDto.getItem().getId()).orElseThrow(() -> new NotFoundException("Item Id указан неверно"));
+        User booker = userRepository.findById(userId).orElseThrow(() -> new NotFoundException("User Id указан неверно"));
+        Booking createdBooking = BookingMapper.dtoToNewBooking(createBookingDto, bookingItem, booker);
+        Booking saved = bookingRepository.save(createdBooking);
+        return BookingMapper.bookingToDto(saved,bookingItem,booker);
     }
 
+    @Transactional
     @Override
     public BookingDto approveBooking(String userIdStr, Long bookingId, Boolean approved) {
         if (approved == null) {
@@ -56,14 +57,15 @@ public class BookingServiceImpl  implements BookingService{
         } else {
             resultBooking.setStatus(BookingStatus.REJECTED);
         }
-        return BookingMapper.bookingToDto(bookingRepository.save(resultBooking));
+        Booking saved = bookingRepository.save(resultBooking);
+        return BookingMapper.bookingToDto(bookingRepository.findByIdWithRelations(saved.getId()).orElseThrow(() -> new DataAccessResourceFailureException("Этой ошибки произойти не должно.")));
     }
 
     @Transactional(readOnly = true)
     @Override
     public BookingDto findBookingById(String userIdStr, Long bookingId) {
         Long userId = validator.userIdFormatValidation(userIdStr);
-        Booking resultBooking = bookingRepository.findById(bookingId).orElseThrow(() -> new NotFoundException("Бронирование не найдено!"));
+        Booking resultBooking = bookingRepository.findByIdWithRelations(bookingId).orElseThrow(() -> new NotFoundException("Бронирование не найдено!"));
         User booker = resultBooking.getBooker();
         User owner = resultBooking.getItem().getOwner();
         if (!Objects.equals(userId, booker.getId()) && !Objects.equals(userId,owner.getId())) {
@@ -72,6 +74,7 @@ public class BookingServiceImpl  implements BookingService{
         return BookingMapper.bookingToDto(resultBooking);
     }
 
+    @Transactional(readOnly = true)
     @Override
     public List<BookingDto> findAllUserBookingsWithState(String userIdStr, BookingServiceState state) {
         Long bookerId = validator.userIdFormatValidation(userIdStr);
@@ -90,6 +93,7 @@ public class BookingServiceImpl  implements BookingService{
         return filteredBookings.stream().map(BookingMapper::bookingToDto).collect(Collectors.toList());
     }
 
+    @Transactional(readOnly = true)
     @Override
     public List<BookingDto> findAllBookingsOfUserItemsWithState(String userIdStr, BookingServiceState state) {
         Long ownerId = Long.parseLong(userIdStr);
