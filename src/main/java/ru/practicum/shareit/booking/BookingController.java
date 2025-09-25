@@ -8,6 +8,7 @@ import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.dto.CreateBookingDto;
 
 import java.util.Collection;
+import java.util.List;
 
 /**
  * TODO Sprint add-bookings.
@@ -36,13 +37,13 @@ public class BookingController {
 
 
     @GetMapping
-    public  ResponseEntity<Collection<BookingDto>> findAllUserBookingsWithState(@RequestHeader(value = "X-Sharer-User-Id", required = false) String userId,@RequestParam(value = "state", defaultValue = "ALL") BookingState state) {
+    public  ResponseEntity<List<BookingDto>> findAllUserBookingsWithState(@RequestHeader(value = "X-Sharer-User-Id", required = false) String userId,@RequestParam(value = "state", defaultValue = "ALL") BookingServiceState state) {
         return ResponseEntity.ok(bookingService.findAllUserBookingsWithState(userId, state));
     }
     //TODO  "Какие вещи Я бронировал"
 
     @GetMapping("/owner")
-    public ResponseEntity<Collection<BookingDto>> findAllBookingsOfUserItemsWithState(@RequestHeader(value = "X-Sharer-User-Id", required = false) String userId,@RequestParam(value = "state", defaultValue = "ALL") BookingState state) {
+    public ResponseEntity<List<BookingDto>> findAllBookingsOfUserItemsWithState(@RequestHeader(value = "X-Sharer-User-Id", required = false) String userId, @RequestParam(value = "state", defaultValue = "ALL") BookingServiceState state) {
         return ResponseEntity.ok(bookingService.findAllBookingsOfUserItemsWithState(userId, state));
     }
     //TODO "Кто бронировал МОИ вещи"

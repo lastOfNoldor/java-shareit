@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import ru.practicum.shareit.exception.ConflictException;
 import ru.practicum.shareit.exception.NotFoundException;
+import ru.practicum.shareit.exception.ValidationException;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.UserRepository;
 import ru.practicum.shareit.user.dto.UpdateUserDto;
@@ -29,6 +30,14 @@ public class CentralValidator {
     public void updatedItemAccess(Item existingItem, Long userId) {
         if (!Objects.equals(existingItem.getOwner().getId(), userId)) {
             throw new NotFoundException("Отказано в доступе.Пользователь не является владельцем вещи.");
+        }
+    }
+
+    public Long userIdFormatValidation(String userIdStr) {
+        try {
+            return Long.parseLong(userIdStr);
+        } catch (NumberFormatException e) {
+            throw new IllegalArgumentException("Неверный формат Id пользователя");
         }
     }
 
