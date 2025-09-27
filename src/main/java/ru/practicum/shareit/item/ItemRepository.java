@@ -11,14 +11,14 @@ import java.util.Optional;
 
 public interface ItemRepository extends JpaRepository<Item, Long> {
 
-    List<Item> findAllByUserId(Object unknownAttr1);
-
-    @Query("SELECT i FROM Item i WHERE " + "LOWER(i.name) LIKE LOWER(CONCAT('%', :searchText, '%')) OR " +
-            "LOWER(i.description) LIKE LOWER(CONCAT('%', :searchText, '%'))")
+    @Query("SELECT i FROM Item i WHERE " + "LOWER(i.name) LIKE LOWER(CONCAT('%', :searchText, '%')) OR " + "LOWER(i.description) LIKE LOWER(CONCAT('%', :searchText, '%'))")
     List<Item> searchInNameOrDescription(@Param("searchText") String searchText);
 
+    @EntityGraph(attributePaths = {"owner"})
     List<Item> findAllByOwner_Id(Long id);
 
-    @EntityGraph(attributePaths = { "owner" })
-    Optional<Item> findByIdWithRelations(Long id);
+    @EntityGraph(attributePaths = {"owner"})
+    Optional<Item> findWithOwnerById(Long id);
+
+
 }

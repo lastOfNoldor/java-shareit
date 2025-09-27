@@ -3,6 +3,7 @@ package ru.practicum.shareit.user;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.booking.BookingRepository;
 import ru.practicum.shareit.exception.ConflictException;
 import ru.practicum.shareit.exception.NotFoundException;
@@ -50,9 +51,11 @@ public class UserServiceImpl implements UserService {
     public UserDto createUser(CreateUserDto createUserDto) {
         log.info("Попытка создания нового пользователя: email={}, name={}", createUserDto.getEmail(), createUserDto.getName());
         User createdUser = UserMapper.dtoToNewUser(createUserDto);
-        Optional<User> resultUser = Optional.of(userRepository.save(createdUser));
-        log.info("Попытка создания нового пользователя:  id={}", resultUser.get().getId());
-        return UserMapper.userToDto(resultUser.orElseThrow(() -> new ConflictException("Такой email уже существует")));
+        if (userRepository.findByEmail(createdUser.getEmail()).isPresent())
+            throw new ConflictException("Такой email уже существует");
+        User resultUser = userRepository.save(createdUser);
+        log.info("Попытка создания нового пользователя:  id={}", resultUser.getId());
+        return UserMapper.userToDto(resultUser);
     }
 
     @Override
@@ -69,6 +72,7 @@ public class UserServiceImpl implements UserService {
         return UserMapper.userToDto(resultUser);
     }
 
+    @Transactional
     @Override
     public void deleteUser(Long id) {
         if (id == null) {

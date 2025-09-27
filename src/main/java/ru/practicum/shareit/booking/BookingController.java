@@ -7,7 +7,6 @@ import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.dto.CreateBookingDto;
 
-import java.util.Collection;
 import java.util.List;
 
 /**
@@ -26,17 +25,17 @@ public class BookingController {
     }
 
     @PatchMapping("{bookingId}")
-    public ResponseEntity<BookingDto> approveBooking(@RequestHeader(value = "X-Sharer-User-Id", required = false) String userId,@PathVariable Long bookingId, @RequestParam("approved") Boolean approved) {
+    public ResponseEntity<BookingDto> approveBooking(@RequestHeader(value = "X-Sharer-User-Id", required = false) String userId, @PathVariable Long bookingId, @RequestParam("approved") Boolean approved) {
         return ResponseEntity.ok(bookingService.approveBooking(userId, bookingId, approved));
     }
 
     @GetMapping("{bookingId}")
-    public ResponseEntity<BookingDto> findBookingById(@RequestHeader(value = "X-Sharer-User-Id", required = false) String userId,@PathVariable Long bookingId) {
-        return ResponseEntity.ok(bookingService.findBookingById(userId,bookingId));
+    public ResponseEntity<BookingDto> findBookingById(@RequestHeader(value = "X-Sharer-User-Id", required = false) String userId, @PathVariable Long bookingId) {
+        return ResponseEntity.ok(bookingService.findBookingById(userId, bookingId));
     }
 
     @GetMapping
-    public  ResponseEntity<List<BookingDto>> findAllUserBookingsWithState(@RequestHeader(value = "X-Sharer-User-Id", required = false) String userId,@RequestParam(value = "state", defaultValue = "ALL") BookingServiceState state) {
+    public ResponseEntity<List<BookingDto>> findAllUserBookingsWithState(@RequestHeader(value = "X-Sharer-User-Id", required = false) String userId, @RequestParam(value = "state", defaultValue = "ALL") BookingServiceState state) {
         return ResponseEntity.ok(bookingService.findAllUserBookingsWithState(userId, state));
     }
 

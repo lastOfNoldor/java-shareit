@@ -10,7 +10,7 @@ import ru.practicum.shareit.user.model.User;
 @Builder
 @AllArgsConstructor
 @Entity
-@Table(name = "item")
+@Table(name = "items")
 @NoArgsConstructor
 public class Item {
     @Id
@@ -21,7 +21,7 @@ public class Item {
     private String description;
     private Boolean available;
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "owner_id")
+    @JoinColumn(name = "owner_id", nullable = false)
     private User owner;
 
 }

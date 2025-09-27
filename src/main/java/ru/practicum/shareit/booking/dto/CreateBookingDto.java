@@ -5,7 +5,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import ru.practicum.shareit.item.model.Item;
 
 import java.time.LocalDateTime;
 
@@ -14,11 +13,12 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 public class CreateBookingDto {
+    @NotNull(message = "item id is mandatory")
+    private Long itemId;
     @NotNull(message = "start time is mandatory")
     private LocalDateTime start;
     @NotNull(message = "end time is mandatory")
     private LocalDateTime end;
-    @NotNull(message = "item is mandatory")
-    private Item item;
+
 
 }
