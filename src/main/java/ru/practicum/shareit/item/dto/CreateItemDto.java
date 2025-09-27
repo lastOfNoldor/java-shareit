@@ -16,6 +16,6 @@ public class CreateItemDto {
     private String name;
     @NotBlank(message = "Description is mandatory")
     private String description;
-    @NotNull(message = "Available status is mandatory")
+    @NotNull(message = "Available cannot be null")
     private Boolean available;
 }

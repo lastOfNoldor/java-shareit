@@ -16,10 +16,10 @@ import java.util.Objects;
 public class CentralValidator {
     private final UserRepository userRepository;
 
-    public void updatedUserEmailIsTaken(User existingUser, UpdateUserDto updateUserDto, Long requesterId) {
+    public void updatedUserEmailIsTaken(User existingUser, UpdateUserDto updateUserDto) {
         if (updateUserDto.getEmail() != null) {
             if (!existingUser.getEmail().equals(updateUserDto.getEmail())) {
-                if (userRepository.isEmailTakenByOtherUser(updateUserDto.getEmail(), requesterId)) {
+                if (userRepository.existsByEmail(updateUserDto.getEmail())) {
                     throw new ConflictException("Email уже занят другим пользователем");
                 }
             }
@@ -29,6 +29,14 @@ public class CentralValidator {
     public void updatedItemAccess(Item existingItem, Long userId) {
         if (!Objects.equals(existingItem.getOwner().getId(), userId)) {
             throw new NotFoundException("Отказано в доступе.Пользователь не является владельцем вещи.");
+        }
+    }
+
+    public Long userIdFormatValidation(String userIdStr) {
+        try {
+            return Long.parseLong(userIdStr);
+        } catch (NumberFormatException e) {
+            throw new IllegalArgumentException("Неверный формат Id пользователя");
         }
     }
 
