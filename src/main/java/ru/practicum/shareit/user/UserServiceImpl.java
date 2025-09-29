@@ -9,7 +9,6 @@ import ru.practicum.shareit.exception.ConflictException;
 import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.exception.ValidationException;
 import ru.practicum.shareit.item.ItemRepository;
-import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.dto.CreateUserDto;
 import ru.practicum.shareit.user.dto.UpdateUserDto;
 import ru.practicum.shareit.user.dto.UserDto;
@@ -78,12 +77,9 @@ public class UserServiceImpl implements UserService {
         if (id == null) {
             throw new ValidationException("отсутствует Id пользователя");
         }
-        bookingRepository.deleteByBooker_Id(id);
-        List<Item> userItems = itemRepository.findAllByOwner_Id(id);
-        for (Item item : userItems) {
-            bookingRepository.deleteByItem_Id(item.getId());
-            itemRepository.delete(item);
-        }
+        List<Long> userItemIds = itemRepository.findAllIdsByOwner_Id(id);
+        bookingRepository.deleteAllByItemIdsIn(userItemIds);
+        itemRepository.deleteAllByIdIn(userItemIds);
         userRepository.deleteById(id);
         log.info("Пользователь с ID {} удален", id);
     }

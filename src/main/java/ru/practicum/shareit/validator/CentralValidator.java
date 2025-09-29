@@ -17,12 +17,9 @@ public class CentralValidator {
     private final UserRepository userRepository;
 
     public void updatedUserEmailIsTaken(User existingUser, UpdateUserDto updateUserDto) {
-        if (updateUserDto.getEmail() != null) {
-            if (!existingUser.getEmail().equals(updateUserDto.getEmail())) {
-                if (userRepository.existsByEmail(updateUserDto.getEmail())) {
-                    throw new ConflictException("Email уже занят другим пользователем");
-                }
-            }
+        String newEmail = updateUserDto.getEmail();
+        if (newEmail != null && !existingUser.getEmail().equals(newEmail) && userRepository.existsByEmail(newEmail)) {
+            throw new ConflictException("Email уже занят другим пользователем");
         }
     }
 

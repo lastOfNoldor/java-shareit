@@ -3,6 +3,7 @@ package ru.practicum.shareit.booking;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import ru.practicum.shareit.booking.model.Booking;
@@ -34,6 +35,9 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
     List<Booking> findAllByItem_Owner_Id(Long id, Sort sort);
 
     @EntityGraph(attributePaths = {"item", "booker"})
+    List<Booking> findAllByItem_Owner_Id(Long id);
+
+    @EntityGraph(attributePaths = {"item", "booker"})
     List<Booking> findAllByItem_Owner_IdAndEndDateBefore(Long id, LocalDateTime endDate, Sort sort);
 
     @EntityGraph(attributePaths = {"item", "booker"})
@@ -48,20 +52,24 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
     @Query("SELECT b FROM Booking b LEFT JOIN FETCH b.item i LEFT JOIN FETCH b.booker LEFT JOIN FETCH i.owner WHERE b.id = :bookingId")
     Optional<Booking> findWithBookerAndOwnerById(@Param("bookingId") Long bookingId);
 
-    void deleteByBooker_Id(Long id);
-
-    void deleteByItem_Id(Long id);
-
-    Optional<Booking> findByItem_Id(Long id);
-
     @EntityGraph(attributePaths = {"booker"})
     Optional<Booking> findByBooker_IdAndItem_IdAndEndDateBefore(Long id, Long id1, LocalDateTime endDate);
 
-    @Query("SELECT b FROM Booking b WHERE b.item.id = :itemId " + "AND b.endDate < :now AND b.status = ru.practicum.shareit.booking.BookingStatus.APPROVED " + "ORDER BY b.endDate DESC LIMIT 1")
+    @Query("""
+            SELECT b FROM Booking b WHERE b.item.id = :itemId
+            AND b.endDate < :now AND b.status = ru.practicum.shareit.booking.BookingStatus.APPROVED
+            ORDER BY b.endDate
+            DESC LIMIT 1""")
     Optional<Booking> findLastBooking(@Param("itemId") Long itemId, @Param("now") LocalDateTime now);
 
-    @Query("SELECT b FROM Booking b WHERE b.item.id = :itemId " + "AND b.startDate > :now AND b.status = ru.practicum.shareit.booking.BookingStatus.APPROVED " + "ORDER BY b.startDate ASC LIMIT 1")
+    @Query("""
+            SELECT b FROM Booking b WHERE b.item.id = :itemId
+            AND b.startDate > :now AND b.status = ru.practicum.shareit.booking.BookingStatus.APPROVED
+            ORDER BY b.startDate ASC LIMIT 1""")
     Optional<Booking> findNextBooking(@Param("itemId") Long itemId, @Param("now") LocalDateTime now);
 
+    @Modifying
+    @Query("DELETE FROM Booking b WHERE b.item.id IN :itemIds")
+    void deleteAllByItemIdsIn(@Param("itemIds") List<Long> itemIds);
 }
 

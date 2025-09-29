@@ -32,20 +32,20 @@ public class ItemServiceImpl implements ItemService {
     @Transactional(readOnly = true)
     @Override
     public Collection<ItemDto> findAllUsersItems(Long userId) {
-        log.info("Попытка получения списка всех вещей владельца с бронированиями.");
+        log.info("Попытка получения списка всех вещей владельца с бронированиями и комментариями.");
         List<Item> allByOwnerId = itemRepository.findAllByOwner_Id(userId);
         List<ItemDto> result = new ArrayList<>();
+        Map<Long, Booking> bookingsOfUsersItems = bookingRepository.findAllByItem_Owner_Id(userId).stream().collect(Collectors.toMap(booking -> booking.getItem().getId(), booking -> booking));
+        List<Long> itemIds = bookingsOfUsersItems.keySet().stream().collect(Collectors.toList());
+        Map<Long, List<Comment>> itemsComments = commentRepository.findAllByItemIdsIn(itemIds).stream().collect(Collectors.groupingBy(comment -> comment.getItem().getId()));
         for (Item item : allByOwnerId) {
-            Long itemId = item.getId();
-            Optional<Booking> booking = bookingRepository.findByItem_Id(itemId);
-            if (booking.isPresent()) {
-                Booking confirmedBooking = booking.get();
-                List<Comment> comments = commentRepository.findAllByItem_Id(itemId);
-                result.add(ItemMapper.itemToDtoWithDatesAndComments(item, confirmedBooking.getStartDate(), confirmedBooking.getEndDate(), comments));
+            Booking currentItemBooking = bookingsOfUsersItems.get(item.getId());
+            if (currentItemBooking != null) {
+                List<Comment> currentItemComments = itemsComments.get(item.getId());
+                result.add(ItemMapper.itemToDtoWithDatesAndComments(item, currentItemBooking.getStartDate(), currentItemBooking.getEndDate(), currentItemComments));
             } else {
                 result.add(ItemMapper.itemToDto(item));
             }
-
         }
         return result;
     }
