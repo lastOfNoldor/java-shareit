@@ -3,9 +3,12 @@ package ru.practicum.shareit.user;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import ru.practicum.shareit.booking.BookingRepository;
 import ru.practicum.shareit.exception.ConflictException;
 import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.exception.ValidationException;
+import ru.practicum.shareit.item.ItemRepository;
 import ru.practicum.shareit.user.dto.CreateUserDto;
 import ru.practicum.shareit.user.dto.UpdateUserDto;
 import ru.practicum.shareit.user.dto.UserDto;
@@ -13,6 +16,7 @@ import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.validator.CentralValidator;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -22,12 +26,14 @@ import java.util.stream.Collectors;
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final CentralValidator centralValidator;
+    private final BookingRepository bookingRepository;
+    private final ItemRepository itemRepository;
 
 
     @Override
     public Collection<UserDto> findAllUsers() {
         log.info("Попытка получения списка всех пользователей.");
-        return userRepository.getAllUsers().stream().map(UserMapper::userToDto).collect(Collectors.toList());
+        return userRepository.findAll().stream().map(UserMapper::userToDto).collect(Collectors.toList());
     }
 
     @Override
@@ -36,7 +42,7 @@ public class UserServiceImpl implements UserService {
         if (id == null) {
             throw new ValidationException("отсутствует Id пользователя");
         }
-        Optional<User> userById = userRepository.getUserById(id);
+        Optional<User> userById = userRepository.findById(id);
         return UserMapper.userToDto(userById.orElseThrow(() -> new NotFoundException("User с Id" + id + "не найден")));
     }
 
@@ -44,9 +50,11 @@ public class UserServiceImpl implements UserService {
     public UserDto createUser(CreateUserDto createUserDto) {
         log.info("Попытка создания нового пользователя: email={}, name={}", createUserDto.getEmail(), createUserDto.getName());
         User createdUser = UserMapper.dtoToNewUser(createUserDto);
-        Optional<User> resultUser = userRepository.createUser(createdUser);
-        log.info("Попытка создания нового пользователя:  id={}", resultUser.get().getId());
-        return UserMapper.userToDto(resultUser.orElseThrow(() -> new ConflictException("Такой email уже существует")));
+        if (userRepository.findByEmail(createdUser.getEmail()).isPresent())
+            throw new ConflictException("Такой email уже существует");
+        User resultUser = userRepository.save(createdUser);
+        log.info("Попытка создания нового пользователя:  id={}", resultUser.getId());
+        return UserMapper.userToDto(resultUser);
     }
 
     @Override
@@ -55,22 +63,24 @@ public class UserServiceImpl implements UserService {
         if (id == null) {
             throw new ValidationException("отсутствует Id пользователя");
         }
-        User existingUser = userRepository.getUserById(id).orElseThrow(() -> new NotFoundException("Пользователь не найден"));
-        centralValidator.updatedUserEmailIsTaken(existingUser, updateUserDto, id);
+        User existingUser = userRepository.findById(id).orElseThrow(() -> new NotFoundException("Пользователь не найден"));
+        centralValidator.updatedUserEmailIsTaken(existingUser, updateUserDto);
         User updatedUser = UserMapper.dtoToUpdatedUser(existingUser, updateUserDto);
-        User resultUser = userRepository.updateUser(updatedUser);
+        User resultUser = userRepository.save(updatedUser);
         log.info("Успешное обновление пользователя с ID: {}", id);
         return UserMapper.userToDto(resultUser);
     }
 
+    @Transactional
     @Override
     public void deleteUser(Long id) {
         if (id == null) {
             throw new ValidationException("отсутствует Id пользователя");
         }
-        userRepository.deleteUser(id);
+        List<Long> userItemIds = itemRepository.findAllIdsByOwner_Id(id);
+        bookingRepository.deleteAllByItemIdsIn(userItemIds);
+        itemRepository.deleteAllByIdIn(userItemIds);
+        userRepository.deleteById(id);
         log.info("Пользователь с ID {} удален", id);
     }
-
-
 }
