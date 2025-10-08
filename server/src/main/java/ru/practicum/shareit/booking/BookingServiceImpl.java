@@ -36,10 +36,8 @@ public class BookingServiceImpl implements BookingService {
 
     @Transactional
     @Override
-    public BookingDto createBooking(String userIdStr, CreateBookingDto createBookingDto) {
-        log.info("Создание бронирования для пользователя ID: {}, Item ID: {}", userIdStr, createBookingDto.getItemId());
-
-        Long userId = validator.userIdFormatValidation(userIdStr); //TODO
+    public BookingDto createBooking(Long userId, CreateBookingDto createBookingDto) {
+        log.info("Создание бронирования для пользователя ID: {}, Item ID: {}", userId, createBookingDto.getItemId());
         Item bookingItem = itemRepository.findById(createBookingDto.getItemId()).orElseThrow(() -> {
             log.error("Item с ID {} не найден", createBookingDto.getItemId());
             return new NotFoundException("Item Id указан неверно");
@@ -69,15 +67,13 @@ public class BookingServiceImpl implements BookingService {
 
     @Transactional
     @Override
-    public BookingDto approveBooking(String userIdStr, Long bookingId, Boolean approved) {
-        log.info("Изменение статуса бронирования ID: {} на approved: {} пользователем ID: {}", bookingId, approved, userIdStr);
+    public BookingDto approveBooking(Long userId, Long bookingId, Boolean approved) {
+        log.info("Изменение статуса бронирования ID: {} на approved: {} пользователем ID: {}", bookingId, approved, userId);
 
         if (approved == null) {
             log.warn("Параметр approved не указан для бронирования ID: {}", bookingId);
             throw new IllegalArgumentException("Параметр approved обязателен");
         }
-
-        Long userId = validator.userIdFormatValidation(userIdStr);
         Booking resultBooking = bookingRepository.findByIdAndItemOwnerId(bookingId, userId).orElseThrow(() -> {
             log.error("Бронирование ID: {} не найдено или пользователь ID: {} не является владельцем", bookingId, userId);
             return new ValidationException("Бронирование не найдено или у вас нет прав на изменение статуса");
@@ -101,10 +97,8 @@ public class BookingServiceImpl implements BookingService {
 
     @Transactional(readOnly = true)
     @Override
-    public BookingDto findBookingById(String userIdStr, Long bookingId) {
-        log.debug("Поиск бронирования ID: {} пользователем ID: {}", bookingId, userIdStr);
-
-        Long userId = validator.userIdFormatValidation(userIdStr);
+    public BookingDto findBookingById(Long userId, Long bookingId) {
+        log.debug("Поиск бронирования ID: {} пользователем ID: {}", bookingId, userId);
         Booking resultBooking = bookingRepository.findWithBookerAndOwnerById(bookingId).orElseThrow(() -> {
             log.warn("Бронирование ID: {} не найдено", bookingId);
             return new NotFoundException("Бронирование не найдено!");
@@ -124,9 +118,8 @@ public class BookingServiceImpl implements BookingService {
 
     @Transactional(readOnly = true)
     @Override
-    public List<BookingDto> findAllUserBookingsWithState(String userIdStr, BookingServiceState state, Integer from, Integer size) {
-        log.info("Поиск всех бронирований пользователя ID: {} с фильтром: {}", userIdStr, state);
-        Long bookerId = validator.userIdFormatValidation(userIdStr);
+    public List<BookingDto> findAllUserBookingsWithState(Long bookerId, BookingServiceState state, Integer from, Integer size) {
+        log.info("Поиск всех бронирований пользователя ID: {} с фильтром: {}", bookerId, state);
         LocalDateTime now = LocalDateTime.now();
         Pageable pageable = PageRequest.of(from / size, size, Sort.by(Sort.Direction.DESC, "startDate"));
         Page<Booking> filteredBookings;
@@ -167,10 +160,8 @@ public class BookingServiceImpl implements BookingService {
 
     @Transactional(readOnly = true)
     @Override
-    public List<BookingDto> findAllBookingsOfUserItemsWithState(String userIdStr, BookingServiceState state) {
-        log.info("Поиск бронирований вещей пользователя ID: {} с фильтром: {}", userIdStr, state);
-
-        Long ownerId = validator.userIdFormatValidation(userIdStr);
+    public List<BookingDto> findAllBookingsOfUserItemsWithState(Long ownerId, BookingServiceState state) {
+        log.info("Поиск бронирований вещей пользователя ID: {} с фильтром: {}", ownerId, state);
         LocalDateTime now = LocalDateTime.now();
         Sort sort = Sort.by(Sort.Direction.DESC, "startDate");
 

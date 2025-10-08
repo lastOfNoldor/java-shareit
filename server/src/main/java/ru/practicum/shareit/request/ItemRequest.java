@@ -18,6 +18,7 @@ import java.time.LocalDateTime;
 public class ItemRequest {
     @EqualsAndHashCode.Include
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @Column(name = "description", nullable = false)
     private String description;

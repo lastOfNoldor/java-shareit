@@ -19,28 +19,28 @@ public class BookingController {
     private final BookingService bookingService;
 
     @PostMapping
-    public ResponseEntity<BookingDto> createBooking(@RequestHeader(value = "X-Sharer-User-Id", required = false) String userId, @RequestBody CreateBookingDto createBookingDto) {
+    public ResponseEntity<BookingDto> createBooking(@RequestHeader(value = "X-Sharer-User-Id", required = false) Long userId, @RequestBody CreateBookingDto createBookingDto) {
         return ResponseEntity.ok(bookingService.createBooking(userId, createBookingDto));
     }
 
     @PatchMapping("{bookingId}")
-    public ResponseEntity<BookingDto> approveBooking(@RequestHeader(value = "X-Sharer-User-Id", required = false) String userId, @PathVariable Long bookingId, @RequestParam("approved") Boolean approved) {
+    public ResponseEntity<BookingDto> approveBooking(@RequestHeader(value = "X-Sharer-User-Id", required = false) Long userId, @PathVariable Long bookingId, @RequestParam("approved") Boolean approved) {
         return ResponseEntity.ok(bookingService.approveBooking(userId, bookingId, approved));
     }
 
     @GetMapping("{bookingId}")
-    public ResponseEntity<BookingDto> findBookingById(@RequestHeader(value = "X-Sharer-User-Id", required = false) String userId, @PathVariable Long bookingId) {
+    public ResponseEntity<BookingDto> findBookingById(@RequestHeader(value = "X-Sharer-User-Id", required = false) Long userId, @PathVariable Long bookingId) {
         return ResponseEntity.ok(bookingService.findBookingById(userId, bookingId));
     }
 
     @GetMapping
-    public ResponseEntity<List<BookingDto>> findAllUserBookingsWithState(@RequestHeader(value = "X-Sharer-User-Id", required = false) String userId, @RequestParam(name = "state", defaultValue = "all") String stateParam, @RequestParam(name = "from", defaultValue = "0") Integer from, @RequestParam(name = "size", defaultValue = "10") Integer size) {
+    public ResponseEntity<List<BookingDto>> findAllUserBookingsWithState(@RequestHeader(value = "X-Sharer-User-Id", required = false) Long userId, @RequestParam(name = "state", defaultValue = "all") String stateParam, @RequestParam(name = "from", defaultValue = "0") Integer from, @RequestParam(name = "size", defaultValue = "10") Integer size) {
         BookingServiceState state = BookingServiceState.from(stateParam).orElseThrow(() -> new IllegalArgumentException("Unknown state: " + stateParam));
         return ResponseEntity.ok(bookingService.findAllUserBookingsWithState(userId, state, from, size));
     }
 
     @GetMapping("/owner")
-    public ResponseEntity<List<BookingDto>> findAllBookingsOfUserItemsWithState(@RequestHeader(value = "X-Sharer-User-Id", required = false) String userId, @RequestParam(value = "state", defaultValue = "ALL") BookingServiceState state) {
+    public ResponseEntity<List<BookingDto>> findAllBookingsOfUserItemsWithState(@RequestHeader(value = "X-Sharer-User-Id", required = false) Long userId, @RequestParam(value = "state", defaultValue = "ALL") BookingServiceState state) {
         return ResponseEntity.ok(bookingService.findAllBookingsOfUserItemsWithState(userId, state));
     }
 }

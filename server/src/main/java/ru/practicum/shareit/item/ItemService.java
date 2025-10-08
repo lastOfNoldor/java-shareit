@@ -12,7 +12,7 @@ public interface ItemService {
 
     ItemDtoWithMultipleBookings findItemById(Long userId, Long id);
 
-    ItemDto createItem(String userId, CreateItemDto createItemDto);
+    ItemDto createItem(Long userId, CreateItemDto createItemDto);
 
     UpdateItemDto updateItem(Long userId, Long itemId, UpdateItemDto updateItemDto);
 

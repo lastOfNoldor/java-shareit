@@ -72,9 +72,8 @@ public class ItemServiceImpl implements ItemService {
 
     @Transactional
     @Override
-    public ItemDto createItem(String userIdStr, CreateItemDto createItemDto) {
-        log.info("Попытка создания вещи пользователя ID: {}", userIdStr);
-        Long userId = validator.userIdFormatValidation(userIdStr);
+    public ItemDto createItem(Long userId, CreateItemDto createItemDto) {
+        log.info("Попытка создания вещи пользователя ID: {}", userId);
         Item createdItem = ItemMapper.dtoToNewItem(createItemDto);
         User userById = userRepository.findById(userId).orElseThrow(() -> new NotFoundException("User с Id" + userId + "не найден"));
         createdItem.setOwner(userById);
@@ -108,7 +107,7 @@ public class ItemServiceImpl implements ItemService {
         if (text == null || text.isBlank()) {
             return Collections.emptyList();
         }
-        return itemRepository.searchInNameOrDescription(text).stream().filter(Item::getAvailable).map(ItemMapper::itemToUpdateDto).collect(Collectors.toList());
+        return itemRepository.searchInNameOrDescription(text).stream().filter(Item::getAvailable).map(item -> ItemMapper.itemToUpdateDto(item)).collect(Collectors.toList());
     }
 
     @Transactional

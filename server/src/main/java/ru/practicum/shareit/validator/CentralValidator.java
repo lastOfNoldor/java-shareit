@@ -29,12 +29,4 @@ public class CentralValidator {
         }
     }
 
-    public Long userIdFormatValidation(String userIdStr) {
-        try {
-            return Long.parseLong(userIdStr);
-        } catch (NumberFormatException e) {
-            throw new IllegalArgumentException("Неверный формат Id пользователя");
-        }
-    }
-
 }

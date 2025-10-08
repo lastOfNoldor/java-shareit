@@ -32,4 +32,7 @@ public interface ItemRepository extends JpaRepository<Item, Long> {
     void deleteAllByIdIn(@Param("itemIds") List<Long> itemIds);
 
     List<Item> findAllByRequestIdIn(List<Long> ids);
+
+    @Query("SELECT i FROM Item i WHERE i.requestId = :requestId")
+    List<Item> findAllByRequestId(@Param("requestId") Long requestId);
 }

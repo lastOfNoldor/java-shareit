@@ -48,7 +48,7 @@ public class RequestServiceImpl implements RequestService {
             return Collections.emptyList();
         }
         List<Long> requestIds = userRequests.stream().map(ItemRequest::getId).collect(Collectors.toList());
-        Map<Long, List<Item>> itemsByRequestId = itemRepository.findAllByRequestIdIn(requestIds).stream().collect(Collectors.groupingBy(Item::getRequestId, LinkedHashMap::new, Collectors.toList()));
+        Map<Long, List<Item>> itemsByRequestId = itemRepository.findAllByRequestIdIn(requestIds).stream().collect(Collectors.groupingBy(item -> item.getRequestId(), LinkedHashMap::new, Collectors.toList()));
         return userRequests.stream().map(request -> {
             List<Item> items = itemsByRequestId.getOrDefault(request.getId(), Collections.emptyList());
             List<ShortItemDtoForRequest> itemDtos = items.stream().map(item -> RequestMapper.itemToShortItemDtoForRequest(item, item.getOwner().getId())).collect(Collectors.toList());
@@ -66,7 +66,7 @@ public class RequestServiceImpl implements RequestService {
     @Override
     public RequestDto getRequestById(long reqId) {
         ItemRequest result = repository.findById(reqId).orElseThrow(() -> new NotFoundException("Запрос не найден."));
-        List<Item> itemsByRequestId = itemRepository.findAllByRequestIdIn(List.of(result.getId()));
+        List<Item> itemsByRequestId = itemRepository.findAllByRequestId(result.getId());
         List<ShortItemDtoForRequest> itemDtos = itemsByRequestId.stream().map(item -> RequestMapper.itemToShortItemDtoForRequest(item, item.getOwner().getId())).collect(Collectors.toList());
         return RequestMapper.EntityToRequestDto(result, itemDtos);
 
