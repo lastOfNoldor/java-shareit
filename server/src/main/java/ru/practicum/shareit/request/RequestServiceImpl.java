@@ -48,7 +48,7 @@ public class RequestServiceImpl implements RequestService {
             return Collections.emptyList();
         }
         List<Long> requestIds = userRequests.stream().map(ItemRequest::getId).collect(Collectors.toList());
-        Map<Long, List<Item>> itemsByRequestId = itemRepository.findAllByRequestIdIn(requestIds).stream().collect(Collectors.groupingBy(item -> item.getRequestId(), LinkedHashMap::new, Collectors.toList()));
+        Map<Long, List<Item>> itemsByRequestId = itemRepository.findAllByRequestIdIn(requestIds).stream().collect(Collectors.groupingBy(item -> item.getRequest().getId(), LinkedHashMap::new, Collectors.toList()));
         return userRequests.stream().map(request -> {
             List<Item> items = itemsByRequestId.getOrDefault(request.getId(), Collections.emptyList());
             List<ShortItemDtoForRequest> itemDtos = items.stream().map(item -> RequestMapper.itemToShortItemDtoForRequest(item, item.getOwner().getId())).collect(Collectors.toList());

@@ -5,7 +5,6 @@ import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.item.dto.*;
 import ru.practicum.shareit.item.model.Comment;
 import ru.practicum.shareit.item.model.Item;
-import ru.practicum.shareit.request.ItemRequest;
 import ru.practicum.shareit.user.model.User;
 
 import java.time.LocalDateTime;
@@ -35,20 +34,19 @@ public class ItemMapper {
     }
 
     public static Item dtoToNewItem(CreateItemDto createItemDto) {
-        return Item.builder().name(createItemDto.getName()).description(createItemDto.getDescription()).available(createItemDto.getAvailable()).requestId(createItemDto.getRequestId()).build();
+        return Item.builder().name(createItemDto.getName()).description(createItemDto.getDescription()).available(createItemDto.getAvailable()).build();
     }
 
-    public static ItemDtoWithDatesAndComments itemToDtoWithDatesAndComments(Item item, LocalDateTime start, LocalDateTime end, List<Comment> comments) {
+    public static ItemDtoWithDatesAndComments itemToDtoWithDatesAndComments(Item item, LocalDateTime start, LocalDateTime end, List<Comment> comments, Long reqId) {
         List<CommentDto> dtos = comments.stream().map(comment -> CommentMapper.commentToDto(comment, comment.getAuthor().getName())).collect(Collectors.toList());
-        return ItemDtoWithDatesAndComments.builder().id(item.getId()).name(item.getName()).description(item.getDescription()).available(item.getAvailable()).start(start).end(end).ownerId(item.getOwner().getId()).comments(dtos).requestId(item.getRequestId()).build();
+        return ItemDtoWithDatesAndComments.builder().id(item.getId()).name(item.getName()).description(item.getDescription()).available(item.getAvailable()).start(start).end(end).ownerId(item.getOwner().getId()).comments(dtos).requestId(reqId).build();
     }
 
-    public static UpdateItemDto itemToUpdateDto(Item resultItem) {
-
-        return UpdateItemDto.builder().id(resultItem.getId()).name(resultItem.getName()).description(resultItem.getDescription()).available(resultItem.getAvailable()).requestId(resultItem.getRequestId()).build();
+    public static UpdateItemDto itemToUpdateDto(Item resultItem, Long reqId) {
+        return UpdateItemDto.builder().id(resultItem.getId()).name(resultItem.getName()).description(resultItem.getDescription()).available(resultItem.getAvailable()).requestId(reqId).build();
     }
 
-    public static ItemDtoWithMultipleBookings itemToDtoWithMultipleBookings(Item item, Booking lastBooking, Booking nextBooking, List<Comment> comments) {
+    public static ItemDtoWithMultipleBookings itemToDtoWithMultipleBookings(Item item, Booking lastBooking, Booking nextBooking, List<Comment> comments, Long reqId) {
         List<CommentDto> dtos = comments.stream().map(comment -> CommentMapper.commentToDto(comment, comment.getAuthor().getName())).collect(Collectors.toList());
         ShortBookingDto lastBookingDto = null;
         if (lastBooking != null) {
@@ -60,6 +58,6 @@ public class ItemMapper {
             nextBookingDto = ShortBookingDto.builder().start(nextBooking.getStartDate()).end(nextBooking.getEndDate()).build();
         }
 
-        return ItemDtoWithMultipleBookings.builder().id(item.getId()).name(item.getName()).description(item.getDescription()).available(item.getAvailable()).lastBooking(lastBookingDto).nextBooking(nextBookingDto).comments(dtos).requestId(item.getRequestId()).build();
+        return ItemDtoWithMultipleBookings.builder().id(item.getId()).name(item.getName()).description(item.getDescription()).available(item.getAvailable()).lastBooking(lastBookingDto).nextBooking(nextBookingDto).comments(dtos).requestId(reqId).build();
     }
 }

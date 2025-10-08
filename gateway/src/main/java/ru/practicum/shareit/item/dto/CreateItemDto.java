@@ -18,4 +18,5 @@ public class CreateItemDto {
     private String description;
     @NotNull(message = "Available cannot be null")
     private Boolean available;
+    private Long requestId;
 }
