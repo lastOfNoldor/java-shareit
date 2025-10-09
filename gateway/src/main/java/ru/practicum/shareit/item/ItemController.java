@@ -48,7 +48,7 @@ public class ItemController {
 
     @PostMapping("/{itemId}/comment")
     public ResponseEntity<Object> createComment(@RequestHeader(value = "X-Sharer-User-Id") Long userId, @PathVariable Long itemId, @RequestBody @Valid CreateCommentDto createCommentDto) {
-        return itemClient.CreateComment("/comment", userId, itemId, createCommentDto);
+        return itemClient.createComment("/comment", userId, itemId, createCommentDto);
     }
 
     @DeleteMapping("/{id}")

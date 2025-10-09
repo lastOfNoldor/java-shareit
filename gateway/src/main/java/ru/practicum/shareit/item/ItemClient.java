@@ -47,7 +47,7 @@ public class ItemClient extends BaseClient {
         return get(path + "?text={text}", null, parameters);
     }
 
-    public ResponseEntity<Object> CreateComment(String path, Long userId, Long itemId, @Valid CreateCommentDto createCommentDto) {
+    public ResponseEntity<Object> createComment(String path, Long userId, Long itemId, @Valid CreateCommentDto createCommentDto) {
         return post("/" + itemId + path, userId, createCommentDto);
     }
 
