@@ -1,9 +1,7 @@
 package ru.practicum.shareit.request;
 
 import jakarta.persistence.*;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import ru.practicum.shareit.user.model.User;
 
 import java.time.LocalDateTime;
@@ -15,6 +13,9 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @Table(name = "requests")
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class ItemRequest {
     @EqualsAndHashCode.Include
     @Id

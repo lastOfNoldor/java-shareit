@@ -6,7 +6,7 @@ import org.springframework.test.context.TestPropertySource;
 
 @SpringBootTest(classes = ShareItApp.class)
 @TestPropertySource(locations = "classpath:application.properties")
-class ShareItTests {
+public class ShareItTests {
 
     @Test
     void contextLoads() {

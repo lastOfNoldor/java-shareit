@@ -5,7 +5,6 @@ import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.item.dto.*;
 import ru.practicum.shareit.item.model.Comment;
 import ru.practicum.shareit.item.model.Item;
-import ru.practicum.shareit.user.model.User;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -13,10 +12,6 @@ import java.util.stream.Collectors;
 
 public class ItemMapper {
     public static ItemDto itemToDto(Item item) {
-        return ItemDto.builder().id(item.getId()).name(item.getName()).description(item.getDescription()).available(item.getAvailable()).ownerId(item.getOwner().getId()).build();
-    }
-
-    public static ItemDto itemToDto(Item item, User user) {
         return ItemDto.builder().id(item.getId()).name(item.getName()).description(item.getDescription()).available(item.getAvailable()).ownerId(item.getOwner().getId()).build();
     }
 

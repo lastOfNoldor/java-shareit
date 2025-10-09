@@ -10,9 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.user.dto.CreateUserDto;
 import ru.practicum.shareit.user.dto.UpdateUserDto;
 
-/**
- * TODO Sprint add-controllers.
- */
+
 @Slf4j
 @Controller
 @RequestMapping(path = "/users")

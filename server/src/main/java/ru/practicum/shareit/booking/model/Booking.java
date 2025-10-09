@@ -2,6 +2,7 @@ package ru.practicum.shareit.booking.model;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.Check;
 import ru.practicum.shareit.booking.BookingStatus;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.model.User;
@@ -15,6 +16,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Entity
 @Table(name = "bookings")
+@Check(constraints = "end_date > start_date")
 @NoArgsConstructor
 public class Booking {
     @EqualsAndHashCode.Include

@@ -18,7 +18,6 @@ import ru.practicum.shareit.item.ItemRepository;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.UserRepository;
 import ru.practicum.shareit.user.model.User;
-import ru.practicum.shareit.validator.CentralValidator;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -122,6 +121,9 @@ public class BookingServiceImpl implements BookingService {
         LocalDateTime now = LocalDateTime.now();
         Pageable pageable = PageRequest.of(from / size, size, Sort.by(Sort.Direction.DESC, "startDate"));
         Page<Booking> filteredBookings;
+        if (state == null) {
+            throw new IllegalArgumentException("State cannot be null");
+        }
         switch (state) {
             case PAST -> {
                 log.debug("Поиск завершенных бронирований для пользователя ID: {}", bookerId);
@@ -163,7 +165,9 @@ public class BookingServiceImpl implements BookingService {
         log.info("Поиск бронирований вещей пользователя ID: {} с фильтром: {}", ownerId, state);
         LocalDateTime now = LocalDateTime.now();
         Sort sort = Sort.by(Sort.Direction.DESC, "startDate");
-
+        if (state == null) {
+            throw new IllegalArgumentException("State cannot be null");
+        }
         List<Booking> relatedBookings;
         switch (state) {
             case PAST -> {
