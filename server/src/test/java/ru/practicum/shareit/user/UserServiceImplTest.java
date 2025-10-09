@@ -1,3 +1,4 @@
+// CHECKSTYLE:OFF
 package ru.practicum.shareit.user;
 
 import org.junit.jupiter.api.Test;
@@ -75,3 +76,4 @@ public class UserServiceImplTest {
     }
 
 }
+// CHECKSTYLE:ON

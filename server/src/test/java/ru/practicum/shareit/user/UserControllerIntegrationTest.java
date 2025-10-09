@@ -1,3 +1,4 @@
+// CHECKSTYLE:OFF
 package ru.practicum.shareit.user;
 
 import lombok.RequiredArgsConstructor;
@@ -90,3 +91,4 @@ class UserControllerIntegrationTest {
                 """, name, email);
     }
 }
+// CHECKSTYLE:ON

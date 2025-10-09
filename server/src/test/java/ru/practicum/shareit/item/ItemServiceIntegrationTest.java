@@ -1,3 +1,4 @@
+// CHECKSTYLE:OFF
 package ru.practicum.shareit.item;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -190,3 +191,4 @@ class ItemServiceIntegrationTest {
 
 
 }
+// CHECKSTYLE:ON

@@ -24,7 +24,7 @@ public class RequestMapper {
         return ShortRequestResponse.builder().id(request.getId()).description(request.getDescription()).requesterId(userId).created(request.getCreated()).build();
     }
 
-    public static RequestDto EntityToRequestDto(ItemRequest request, List<ShortItemDtoForRequest> info) {
+    public static RequestDto entityToRequestDto(ItemRequest request, List<ShortItemDtoForRequest> info) {
         return RequestDto.builder().id(request.getId()).description(request.getDescription()).created(request.getCreated()).items(info).build();
     }
 

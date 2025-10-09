@@ -53,7 +53,7 @@ public class RequestServiceImpl implements RequestService {
             List<Item> items = itemsByRequestId.getOrDefault(request.getId(), Collections.emptyList());
             List<ShortItemDtoForRequest> itemDtos = items.stream().map(item -> RequestMapper.itemToShortItemDtoForRequest(item, item.getOwner().getId())).collect(Collectors.toList());
 
-            return RequestMapper.EntityToRequestDto(request, itemDtos);
+            return RequestMapper.entityToRequestDto(request, itemDtos);
         }).collect(Collectors.toList());
     }
 
@@ -68,7 +68,7 @@ public class RequestServiceImpl implements RequestService {
         ItemRequest result = repository.findById(reqId).orElseThrow(() -> new NotFoundException("Запрос не найден."));
         List<Item> itemsByRequestId = itemRepository.findAllByRequestId(result.getId());
         List<ShortItemDtoForRequest> itemDtos = itemsByRequestId.stream().map(item -> RequestMapper.itemToShortItemDtoForRequest(item, item.getOwner().getId())).collect(Collectors.toList());
-        return RequestMapper.EntityToRequestDto(result, itemDtos);
+        return RequestMapper.entityToRequestDto(result, itemDtos);
 
     }
 }

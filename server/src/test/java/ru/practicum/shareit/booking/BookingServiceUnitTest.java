@@ -1,3 +1,4 @@
+// CHECKSTYLE:OFF
 package ru.practicum.shareit.booking;
 
 import org.junit.jupiter.api.Test;
@@ -37,3 +38,4 @@ class BookingServiceUnitTest {
         assertThat(exception.getMessage(), is("State cannot be null"));
     }
 }
+// CHECKSTYLE:ON

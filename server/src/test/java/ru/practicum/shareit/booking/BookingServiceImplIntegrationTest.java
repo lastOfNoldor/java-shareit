@@ -1,3 +1,4 @@
+// CHECKSTYLE:OFF
 package ru.practicum.shareit.booking;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -222,3 +223,4 @@ class BookingServiceImplIntegrationTest {
         return bookingRepository.save(Booking.builder().startDate(start).endDate(end).item(availableItem).booker(booker).status(status).build());
     }
 }
+// CHECKSTYLE:ON

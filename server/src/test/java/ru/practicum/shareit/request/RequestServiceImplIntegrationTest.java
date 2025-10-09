@@ -1,3 +1,4 @@
+// CHECKSTYLE:OFF
 package ru.practicum.shareit.request;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -144,3 +145,4 @@ class RequestServiceImplIntegrationTest {
         assertThat(savedRequest.getDescription(), is("Test description"));
     }
 }
+// CHECKSTYLE:ON

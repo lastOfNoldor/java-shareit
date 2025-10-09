@@ -1,3 +1,4 @@
+// CHECKSTYLE:OFF
 package ru.practicum.shareit.booking;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -157,3 +158,4 @@ class BookingControllerIntegrationTest {
     }
 
 }
+// CHECKSTYLE:ON

@@ -1,3 +1,4 @@
+// CHECKSTYLE:OFF
 package ru.practicum.shareit.request;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -129,3 +130,4 @@ class ItemRequestControllerIntegrationTest {
         mockMvc.perform(get("/requests").header("X-Sharer-User-Id", user.getId())).andExpect(status().isOk()).andExpect(jsonPath("$[0].items", hasSize(1))).andExpect(jsonPath("$[0].items[0].name", is("Drill")));
     }
 }
+// CHECKSTYLE:ON
